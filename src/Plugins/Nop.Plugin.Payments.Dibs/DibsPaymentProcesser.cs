@@ -1,25 +1,100 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Routing;
 using Nop.Core.Domain.Orders;
+using Nop.Core.Domain.Payments;
 using Nop.Core.Plugins;
+using Nop.Plugin.Payments.Dibs.Controllers;
+using Nop.Services.Localization;
 using Nop.Services.Payments;
+using Nop.Web.Framework;
 
 namespace Nop.Plugin.Payments.Dibs
 {
     public class DibsPaymentProcesser : BasePlugin, IPaymentMethod
     {
+        private readonly HttpContextBase _httpContext;
+
+        public DibsPaymentProcesser(HttpContextBase httpContext)
+        {
+            _httpContext = httpContext;
+        }
+
         public ProcessPaymentResult ProcessPayment(ProcessPaymentRequest processPaymentRequest)
         {
-            throw new NotImplementedException();
+            var result = new ProcessPaymentResult();
+            result.NewPaymentStatus = PaymentStatus.Pending;
+            return result;
         }
 
         public void PostProcessPayment(PostProcessPaymentRequest postProcessPaymentRequest)
         {
-            throw new NotImplementedException();
+            var serverUrl = "http://localhost:15536";
+            var dibsPaymentWindowUrl = "https://payment.architrade.com/paymentweb/start.action";
+            var urlBuilder = new StringBuilder();
+            //urlBuilder.AppendFormat(dibsPaymentWindowUrl);
+
+            var acceptUrl = serverUrl;
+            urlBuilder.AppendFormat("accepturl={0}", acceptUrl);
+
+            var amount = "10000";
+            urlBuilder.AppendFormat("&amount={0}", amount);
+
+            var callbackUrl = "";
+            urlBuilder.AppendFormat("");
+
+            var currency = "DKK";
+            urlBuilder.AppendFormat("&currency={0}", currency);
+
+            var merchant = "4254327";
+            urlBuilder.AppendFormat("&merchant={0}", merchant);
+
+            var orderid = "12345";
+            urlBuilder.AppendFormat("&orderid={0}", orderid);
+
+            var testMode = "true";
+            urlBuilder.AppendFormat("&test={0}", testMode);
+
+            RemotePost post = new RemotePost();
+            post.FormName = "FlexWin";
+            post.Url = dibsPaymentWindowUrl;
+            //if (_DIBSPaymentSettings.usesandbox)
+            //{
+                post.Add("test", "yes");
+            //}
+            post.Add("uniqueoid", "yes");
+            var orderTotal = Math.Round(postProcessPaymentRequest.Order.OrderTotal, 2);
+            var ordertotal2 = orderTotal * 100;
+            //int amount = Convert.ToInt32(ordertotal2);
+            int currencyCode = 208;
+            string itemurl = serverUrl;  //_DIBSPaymentSettings.storeURL;
+            int merhcantID = 4254327; //Convert.ToInt32(_DIBSPaymentSettings.MerchantId);
+            int ordernumber = 1234599919; //Convert.ToInt32(postProcessPaymentRequest.Order.Id.ToString("D2"));
+            string continueurl = itemurl + "/Plugins/PaymentDibs/PDTHandler";
+            string cancelurl = itemurl + "/Plugins/PaymentDibs/CancelOrder";
+            //string md5secret = _DIBSPaymentSettings.MD5Secret;
+            //string md5secret2 = _DIBSPaymentSettings.MD5Secret2;
+            //string stringToMd5 = string.Concat(md5secret, md5secret2, merhcantID,
+            //     ordernumber, currencyCode, amount);
+            //string md5check = CalcMD5Key(merhcantID, ordernumber, currencyCode, amount);
+            post.Add("lang", "da");
+            post.Add("currency", currencyCode.ToString());
+            post.Add("color", "blue");
+            post.Add("decorator", "default");
+            post.Add("merchant", merhcantID.ToString());
+            post.Add("orderid", ordernumber.ToString());
+            post.Add("amount", amount.ToString());
+            //post.Add("md5key", md5check);
+            post.Add("accepturl", continueurl);
+            post.Add("cancelurl", cancelurl);
+
+            post.Post();
         }
 
         public bool HidePaymentMethod(IList<ShoppingCartItem> cart)
@@ -55,12 +130,16 @@ namespace Nop.Plugin.Payments.Dibs
 
         public ProcessPaymentResult ProcessRecurringPayment(ProcessPaymentRequest processPaymentRequest)
         {
-            throw new NotImplementedException();
+            var result = new ProcessPaymentResult();
+            result.AddError("Recurring pay ment method not supported");
+            return result;
         }
 
         public CancelRecurringPaymentResult CancelRecurringPayment(CancelRecurringPaymentRequest cancelPaymentRequest)
         {
-            throw new NotImplementedException();
+            var result = new CancelRecurringPaymentResult();
+            result.AddError("CancelRecurringPayment method not supported");
+            return result;
         }
 
         public bool CanRePostProcessPayment(Order order)
@@ -70,7 +149,7 @@ namespace Nop.Plugin.Payments.Dibs
 
         public Type GetControllerType()
         {
-            throw new NotImplementedException();
+            return typeof(PaymentDibsController);
         }
 
         /// <summary>
@@ -135,7 +214,7 @@ namespace Nop.Plugin.Payments.Dibs
         {
             get
             {
-                return PaymentMethodType.Standard;
+                return PaymentMethodType.Redirection;
             }
         }
 
@@ -148,6 +227,26 @@ namespace Nop.Plugin.Payments.Dibs
             {
                 return false;
             }
+        }
+
+        public override void Install()
+        {
+            //settings
+            //var settings = new PayPalStandardPaymentSettings
+            //{
+            //    UseSandbox = true,
+            //    BusinessEmail = "test@test.com",
+            //    PdtToken = "Your PDT token here...",
+            //    PdtValidateOrderTotal = true,
+            //    EnableIpn = true,
+            //    AddressOverride = true,
+            //};
+            //_settingService.SaveSetting(settings);
+
+            //locales
+            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Dibs.Fields.RedirectionTip", "Du vil blive sendt videre til dibs betalingsvindue for at færdiggøre din ordre.");
+
+            base.Install();
         }
 
         public void GetPaymentInfoRoute(out string actionName, out string controllerName, out RouteValueDictionary routeValues)

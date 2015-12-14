@@ -71,9 +71,13 @@
   <ItemGroup>
     <Compile Include="Controllers\PaymentDibsController.cs" />
     <Compile Include="DibsPaymentProcesser.cs" />
+    <Compile Include="DibsPaymentSettings.cs" />
     <Compile Include="Models\ConfigurationModel.cs" />
     <Compile Include="Models\PaymentInfoModel.cs" />
+    <Compile Include="DibsHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RouteProvider.cs" />
+    <Compile Include="TransactMode.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Description.txt">
