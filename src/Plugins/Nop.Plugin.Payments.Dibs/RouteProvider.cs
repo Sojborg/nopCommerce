@@ -10,9 +10,9 @@ namespace Nop.Plugin.Payments.Dibs
         {
             //PDT
             routes.MapRoute("Plugin.Payments.Dibs.PDTHandler",
-                 "Plugins/Dibs/PDTHandler",
-                 new { controller = "Dibs", action = "PDTHandler" },
-                 new[] { "Nop.Plugin.Payments.PayPalStandard.Controllers" }
+                 "Plugins/PaymentDibs/PDTHandler",
+                 new { controller = "PaymentDibs", action = "PDTHandler" },
+                 new[] { "Nop.Plugin.Payments.Dibs.Controllers" }
             );
             //IPN
             //routes.MapRoute("Plugin.Payments.PayPalStandard.IPNHandler",
