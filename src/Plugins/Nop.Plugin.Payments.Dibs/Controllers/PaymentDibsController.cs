@@ -19,10 +19,6 @@ namespace Nop.Plugin.Payments.Dibs.Controllers
 {
     public class PaymentDibsController : BasePaymentController
     {
-        private readonly IWebHelper _webHelper;
-        private readonly IWorkContext _workContext;
-        private readonly IStoreService _storeService;
-        private readonly ISettingService _settingService;
         private readonly IPaymentService _paymentService;
         private readonly IOrderService _orderService;
         private readonly IOrderProcessingService _orderProcessingService;
@@ -30,9 +26,13 @@ namespace Nop.Plugin.Payments.Dibs.Controllers
         private readonly PaymentSettings _paymentSettings;
         private readonly ILocalizationService _localizationService;
 
-        public PaymentDibsController(IWebHelper webHelper)
+        public PaymentDibsController(IWebHelper webHelper, IPaymentService paymentService, PaymentSettings paymentSettings
+            , IOrderService orderService, IOrderProcessingService orderProcessingService)
         {
-            _webHelper = webHelper;
+            _paymentService = paymentService;
+            _paymentSettings = paymentSettings;
+            _orderService = orderService;
+            _orderProcessingService = orderProcessingService;
         }
 
         [AdminAuthorize]
@@ -81,141 +81,118 @@ namespace Nop.Plugin.Payments.Dibs.Controllers
             return paymentInfo;
         }
 
+        private PaymentStatus GetPaymentStatus(string paymentStatus)
+        {
+            switch (paymentStatus)
+            {
+                case "2":
+                    return PaymentStatus.Paid;
+                default:
+                    throw new InvalidOperationException("Payment was not successfull.");
+            }
+        }
+
+        private string ConvertToCardType(string paytype)
+        {
+            switch (paytype)
+            {
+                case "MC":
+                    return "Mastercard";
+                case "MC(DK)":
+                    return "Mastercard (DK)";
+                case "MC(SE)":
+                    return "Mastercard (SE)";
+                case "V-DK":
+                    return "VISA-Dankort";
+                case "VISA":
+                    return "VISA";
+                case "MPO_Nets":
+                    return "MobilePay Online";
+                default:
+                    return "Ukendt";
+            }
+        }
+
         [ValidateInput(false)]
         public ActionResult PDTHandler(FormCollection form)
         {
-            var tx = _webHelper.QueryString<string>("tx");
-            Dictionary<string, string> values;
-            string response;
-
             var processor = _paymentService.LoadPaymentMethodBySystemName("Payments.Dibs") as DibsPaymentProcesser;
             if (processor == null ||
                 !processor.IsPaymentMethodActive(_paymentSettings) || !processor.PluginDescriptor.Installed)
                 throw new NopException("PayPal Standard module cannot be loaded");
 
-            return RedirectToRoute("CheckoutCompleted", new { orderId = 123 });
-            //if (processor.GetPdtDetails(tx, out values, out response))
-            //{
-            //    string orderNumber = string.Empty;
-            //    values.TryGetValue("custom", out orderNumber);
-            //    Guid orderNumberGuid = Guid.Empty;
-            //    try
-            //    {
-            //        orderNumberGuid = new Guid(orderNumber);
-            //    }
-            //    catch { }
-            //    Order order = _orderService.GetOrderByGuid(orderNumberGuid);
-            //    if (order != null)
-            //    {
-            //        decimal mc_gross = decimal.Zero;
-            //        try
-            //        {
-            //            mc_gross = decimal.Parse(values["mc_gross"], new CultureInfo("en-US"));
-            //        }
-            //        catch (Exception exc)
-            //        {
-            //            _logger.Error("PayPal PDT. Error getting mc_gross", exc);
-            //        }
+            var orderId = 0;
+            var orderIdStr = form["orderid"].Replace("1000", "");
+            var orderIdParsed = int.TryParse(orderIdStr, out orderId);
 
-            //        string payer_status = string.Empty;
-            //        values.TryGetValue("payer_status", out payer_status);
-            //        string payment_status = string.Empty;
-            //        values.TryGetValue("payment_status", out payment_status);
-            //        string pending_reason = string.Empty;
-            //        values.TryGetValue("pending_reason", out pending_reason);
-            //        string mc_currency = string.Empty;
-            //        values.TryGetValue("mc_currency", out mc_currency);
-            //        string txn_id = string.Empty;
-            //        values.TryGetValue("txn_id", out txn_id);
-            //        string payment_type = string.Empty;
-            //        values.TryGetValue("payment_type", out payment_type);
-            //        string payer_id = string.Empty;
-            //        values.TryGetValue("payer_id", out payer_id);
-            //        string receiver_id = string.Empty;
-            //        values.TryGetValue("receiver_id", out receiver_id);
-            //        string invoice = string.Empty;
-            //        values.TryGetValue("invoice", out invoice);
-            //        string payment_fee = string.Empty;
-            //        values.TryGetValue("payment_fee", out payment_fee);
+            if (orderIdParsed)
+            {
+                var paytype = form["paytype"];
+                var transactionsNumber = form["transact"];
+                var approvalcode = form["approvalcode"];
+                var statuscode = form["statuscode"];
+                var amountStr = form["amount"];
 
-            //        var sb = new StringBuilder();
-            //        sb.AppendLine("Paypal PDT:");
-            //        sb.AppendLine("mc_gross: " + mc_gross);
-            //        sb.AppendLine("Payer status: " + payer_status);
-            //        sb.AppendLine("Payment status: " + payment_status);
-            //        sb.AppendLine("Pending reason: " + pending_reason);
-            //        sb.AppendLine("mc_currency: " + mc_currency);
-            //        sb.AppendLine("txn_id: " + txn_id);
-            //        sb.AppendLine("payment_type: " + payment_type);
-            //        sb.AppendLine("payer_id: " + payer_id);
-            //        sb.AppendLine("receiver_id: " + receiver_id);
-            //        sb.AppendLine("invoice: " + invoice);
-            //        sb.AppendLine("payment_fee: " + payment_fee);
+                var order = _orderService.GetOrderById(orderId);
+                order.CardType = ConvertToCardType(paytype);
+                order.OrderNotes.Add(new OrderNote
+                {
+                    Note = $"Dibs transaktions nummer: {transactionsNumber}",
+                    DisplayToCustomer = true,
+                    CreatedOnUtc = DateTime.UtcNow
+                });
+                order.OrderNotes.Add(new OrderNote
+                {
+                    Note = $"Dibs approvalcode code: {approvalcode}",
+                    DisplayToCustomer = false,
+                    CreatedOnUtc = DateTime.UtcNow
+                });
+                _orderService.UpdateOrder(order);
 
-            //        var newPaymentStatus = DibsHelper.GetPaymentStatus(payment_status, pending_reason);
-            //        sb.AppendLine("New payment status: " + newPaymentStatus);
+                //validate order total
+                decimal amount;
+                var amountParsed = decimal.TryParse(amountStr, out amount);
+                if (amountParsed)
+                {
+                    if (!Math.Round(amount/100, 2).Equals(Math.Round(order.OrderTotal, 2)))
+                    {
+                        string errorStr = $"Dibs PDT. Returned order total {amount} doesn't equal order total {order.OrderTotal}";
+                        _logger.Error(errorStr);
 
-            //        //order note
-            //        order.OrderNotes.Add(new OrderNote
-            //        {
-            //            Note = sb.ToString(),
-            //            DisplayToCustomer = false,
-            //            CreatedOnUtc = DateTime.UtcNow
-            //        });
-            //        _orderService.UpdateOrder(order);
+                        return RedirectToAction("Index", "Home", new {area = ""});
+                    }
+                }
 
-            //        //load settings for a chosen store scope
-            //        //var storeScope = this.GetActiveStoreScopeConfiguration(_storeService, _workContext);
-            //        //var payPalStandardPaymentSettings = _settingService.LoadSetting<PayPalStandardPaymentSettings>(storeScope);
+                //mark order as paid
+                try
+                {
+                    var newPaymentStatus = GetPaymentStatus(statuscode);
 
-            //        //validate order total
-            //        //if (payPalStandardPaymentSettings.PdtValidateOrderTotal && !Math.Round(mc_gross, 2).Equals(Math.Round(order.OrderTotal, 2)))
-            //        //{
-            //        //    string errorStr = string.Format("PayPal PDT. Returned order total {0} doesn't equal order total {1}", mc_gross, order.OrderTotal);
-            //        //    _logger.Error(errorStr);
+                    if (newPaymentStatus == PaymentStatus.Paid)
+                    {
+                        if (_orderProcessingService.CanMarkOrderAsPaid(order))
+                        {
+                            order.AuthorizationTransactionId = transactionsNumber;
+                            _orderService.UpdateOrder(order);
 
-            //        //    return RedirectToAction("Index", "Home", new { area = "" });
-            //        //}
+                            _orderProcessingService.MarkOrderAsPaid(order);
+                        }
+                    }
 
-            //        //mark order as paid
-            //        if (newPaymentStatus == PaymentStatus.Paid)
-            //        {
-            //            if (_orderProcessingService.CanMarkOrderAsPaid(order))
-            //            {
-            //                order.AuthorizationTransactionId = txn_id;
-            //                _orderService.UpdateOrder(order);
+                }
+                catch (Exception ex)
+                {
+                    order.OrderNotes.Add(new OrderNote
+                    {
+                        Note = $"Could not parse status code: {statuscode}",
+                        DisplayToCustomer = false,
+                        CreatedOnUtc = DateTime.UtcNow
+                    });
+                }
+                return RedirectToRoute("CheckoutCompleted", new { orderId = order.Id });
+            }
 
-            //                _orderProcessingService.MarkOrderAsPaid(order);
-            //            }
-            //        }
-            //    }
-
-            //    return RedirectToRoute("CheckoutCompleted", new { orderId = order.Id });
-            //}
-            //else
-            //{
-            //    string orderNumber = string.Empty;
-            //    values.TryGetValue("custom", out orderNumber);
-            //    Guid orderNumberGuid = Guid.Empty;
-            //    try
-            //    {
-            //        orderNumberGuid = new Guid(orderNumber);
-            //    }
-            //    catch { }
-            //    Order order = _orderService.GetOrderByGuid(orderNumberGuid);
-            //    if (order != null)
-            //    {
-            //        //order note
-            //        order.OrderNotes.Add(new OrderNote
-            //        {
-            //            Note = "PayPal PDT failed. " + response,
-            //            DisplayToCustomer = false,
-            //            CreatedOnUtc = DateTime.UtcNow
-            //        });
-            //        _orderService.UpdateOrder(order);
-            //    }
-            //    return RedirectToAction("Index", "Home", new { area = "" });
-            //}
+            return RedirectToAction("Index", "Home", new { area = "" });
         }
     }
 }
