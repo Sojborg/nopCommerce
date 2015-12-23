@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Routing;
+using Nop.Core;
 using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Payments;
 using Nop.Core.Plugins;
@@ -20,10 +21,12 @@ namespace Nop.Plugin.Payments.Dibs
     public class DibsPaymentProcesser : BasePlugin, IPaymentMethod
     {
         private readonly HttpContextBase _httpContext;
+        private readonly IWebHelper _webHelper;
 
-        public DibsPaymentProcesser(HttpContextBase httpContext)
+        public DibsPaymentProcesser(HttpContextBase httpContext, IWebHelper webHelper)
         {
             _httpContext = httpContext;
+            _webHelper = webHelper;
         }
 
         public ProcessPaymentResult ProcessPayment(ProcessPaymentRequest processPaymentRequest)
@@ -37,29 +40,7 @@ namespace Nop.Plugin.Payments.Dibs
         {
             var serverUrl = "http://localhost:15536";
             var dibsPaymentWindowUrl = "https://payment.architrade.com/paymentweb/start.action";
-            var urlBuilder = new StringBuilder();
-            //urlBuilder.AppendFormat(dibsPaymentWindowUrl);
-
-            var acceptUrl = serverUrl;
-            urlBuilder.AppendFormat("accepturl={0}", acceptUrl);
-
-            var amount = "10000";
-            urlBuilder.AppendFormat("&amount={0}", amount);
-
-            var callbackUrl = "";
-            urlBuilder.AppendFormat("");
-
-            var currency = "DKK";
-            urlBuilder.AppendFormat("&currency={0}", currency);
-
-            var merchant = "4254327";
-            urlBuilder.AppendFormat("&merchant={0}", merchant);
-
-            var orderid = "12345";
-            urlBuilder.AppendFormat("&orderid={0}", orderid);
-
-            var testMode = "true";
-            urlBuilder.AppendFormat("&test={0}", testMode);
+            
 
             RemotePost post = new RemotePost();
             post.FormName = "FlexWin";
@@ -71,13 +52,13 @@ namespace Nop.Plugin.Payments.Dibs
             post.Add("uniqueoid", "yes");
             var orderTotal = Math.Round(postProcessPaymentRequest.Order.OrderTotal, 2);
             var ordertotal2 = orderTotal * 100;
-            //int amount = Convert.ToInt32(ordertotal2);
+            int amount = Convert.ToInt32(ordertotal2);
             int currencyCode = 208;
             string itemurl = serverUrl;  //_DIBSPaymentSettings.storeURL;
             int merhcantID = 4254327; //Convert.ToInt32(_DIBSPaymentSettings.MerchantId);
-            int ordernumber = 1234599919; //Convert.ToInt32(postProcessPaymentRequest.Order.Id.ToString("D2"));
-            string continueurl = itemurl + "/Plugins/PaymentDibs/PDTHandler";
-            string cancelurl = itemurl + "/Plugins/PaymentDibs/CancelOrder";
+            int ordernumber = Convert.ToInt32("1000"+postProcessPaymentRequest.Order.Id.ToString("D2"));
+            string continueurl = _webHelper.GetStoreLocation(false) + "Plugins/PaymentDibs/PDTHandler";
+            string cancelurl = _webHelper.GetStoreLocation(false) + "/Plugins/PaymentDibs/CancelOrder";
             //string md5secret = _DIBSPaymentSettings.MD5Secret;
             //string md5secret2 = _DIBSPaymentSettings.MD5Secret2;
             //string stringToMd5 = string.Concat(md5secret, md5secret2, merhcantID,
