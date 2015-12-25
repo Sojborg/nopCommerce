@@ -22,26 +22,41 @@ namespace Nop.Plugin.Payments.Dibs.Controllers
         private readonly IPaymentService _paymentService;
         private readonly IOrderService _orderService;
         private readonly IOrderProcessingService _orderProcessingService;
+        private readonly ISettingService _settingService;
+        private readonly IStoreService _storeService;
+        private readonly IWorkContext _workContext;
         private readonly ILogger _logger;
         private readonly PaymentSettings _paymentSettings;
         private readonly ILocalizationService _localizationService;
 
         public PaymentDibsController(IWebHelper webHelper, IPaymentService paymentService, PaymentSettings paymentSettings
-            , IOrderService orderService, IOrderProcessingService orderProcessingService)
+            , IOrderService orderService, IOrderProcessingService orderProcessingService, ISettingService settingService,
+            IStoreService storeService, IWorkContext workContext, ILocalizationService localizationService) 
         {
             _paymentService = paymentService;
             _paymentSettings = paymentSettings;
             _orderService = orderService;
             _orderProcessingService = orderProcessingService;
+            _settingService = settingService;
+            _storeService = storeService;
+            _workContext = workContext;
+            _localizationService = localizationService;
         }
 
         [AdminAuthorize]
         [ChildActionOnly]
         public ActionResult Configure()
         {
+            //load settings for a chosen store scope
+            var storeScope = this.GetActiveStoreScopeConfiguration(_storeService, _workContext);
+            var dibsPaymentSettings = _settingService.LoadSetting<DibsPaymentSettings>(storeScope);
 
             var model = new ConfigurationModel();
-            
+            model.UseSandbox = dibsPaymentSettings.UseSandbox;
+            model.MerchantId = dibsPaymentSettings.MerchantId;
+            model.Md5Secret = dibsPaymentSettings.Md5Secret;
+            model.Md5Secret2 = dibsPaymentSettings.Md5Secret2;
+            model.DibsWinFlexUrl = dibsPaymentSettings.DibsWinFlexUrl;
 
             return View("~/Plugins/Payments.Dibs/Views/PaymentDibs/Configure.cshtml", model);
         }
@@ -53,7 +68,21 @@ namespace Nop.Plugin.Payments.Dibs.Controllers
         {
             if (!ModelState.IsValid)
                 return Configure();
-            
+
+            var storeScope = this.GetActiveStoreScopeConfiguration(_storeService, _workContext);
+            var dibsPaymentSettings = _settingService.LoadSetting<DibsPaymentSettings>(storeScope);
+
+            dibsPaymentSettings.UseSandbox = model.UseSandbox;
+            dibsPaymentSettings.MerchantId = model.MerchantId;
+            dibsPaymentSettings.Md5Secret = model.Md5Secret;
+            dibsPaymentSettings.Md5Secret2 = model.Md5Secret2;
+            dibsPaymentSettings.DibsWinFlexUrl = model.DibsWinFlexUrl;
+
+            _settingService.SaveSetting(dibsPaymentSettings, x => x.UseSandbox, storeScope, false);
+            _settingService.SaveSetting(dibsPaymentSettings, x => x.MerchantId, storeScope, false);
+            _settingService.SaveSetting(dibsPaymentSettings, x => x.Md5Secret, storeScope, false);
+            _settingService.SaveSetting(dibsPaymentSettings, x => x.Md5Secret2, storeScope, false);
+            _settingService.SaveSetting(dibsPaymentSettings, x => x.DibsWinFlexUrl, storeScope, false);
 
             //now clear settings cache
             _settingService.ClearCache();

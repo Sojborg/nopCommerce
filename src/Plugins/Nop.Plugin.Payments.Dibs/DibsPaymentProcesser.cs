@@ -12,6 +12,7 @@ using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Payments;
 using Nop.Core.Plugins;
 using Nop.Plugin.Payments.Dibs.Controllers;
+using Nop.Services.Configuration;
 using Nop.Services.Localization;
 using Nop.Services.Payments;
 using Nop.Web.Framework;
@@ -22,11 +23,16 @@ namespace Nop.Plugin.Payments.Dibs
     {
         private readonly HttpContextBase _httpContext;
         private readonly IWebHelper _webHelper;
+        private readonly ISettingService _settingService;
+        private readonly DibsPaymentSettings _dibsPaymentSettings;
+        private const int DanisCurrencyCode = 208;
 
-        public DibsPaymentProcesser(HttpContextBase httpContext, IWebHelper webHelper)
+        public DibsPaymentProcesser(HttpContextBase httpContext, IWebHelper webHelper, ISettingService settingService, DibsPaymentSettings dibsPaymentSettings)
         {
             _httpContext = httpContext;
             _webHelper = webHelper;
+            _settingService = settingService;
+            _dibsPaymentSettings = dibsPaymentSettings;
         }
 
         public ProcessPaymentResult ProcessPayment(ProcessPaymentRequest processPaymentRequest)
@@ -39,8 +45,7 @@ namespace Nop.Plugin.Payments.Dibs
         public void PostProcessPayment(PostProcessPaymentRequest postProcessPaymentRequest)
         {
             var serverUrl = "http://localhost:15536";
-            var dibsPaymentWindowUrl = "https://payment.architrade.com/paymentweb/start.action";
-            
+            var dibsPaymentWindowUrl = _dibsPaymentSettings.DibsWinFlexUrl;
 
             RemotePost post = new RemotePost();
             post.FormName = "FlexWin";
@@ -53,22 +58,21 @@ namespace Nop.Plugin.Payments.Dibs
             var orderTotal = Math.Round(postProcessPaymentRequest.Order.OrderTotal, 2);
             var ordertotal2 = orderTotal * 100;
             int amount = Convert.ToInt32(ordertotal2);
-            int currencyCode = 208;
-            string itemurl = serverUrl;  //_DIBSPaymentSettings.storeURL;
-            int merhcantID = 4254327; //Convert.ToInt32(_DIBSPaymentSettings.MerchantId);
+            int currencyCode = DanisCurrencyCode;
+            int merhcantId = Convert.ToInt32(_dibsPaymentSettings.MerchantId);
             int ordernumber = Convert.ToInt32("1000"+postProcessPaymentRequest.Order.Id.ToString("D2"));
             string continueurl = _webHelper.GetStoreLocation(false) + "Plugins/PaymentDibs/PDTHandler";
             string cancelurl = _webHelper.GetStoreLocation(false) + "/Plugins/PaymentDibs/CancelOrder";
-            //string md5secret = _DIBSPaymentSettings.MD5Secret;
-            //string md5secret2 = _DIBSPaymentSettings.MD5Secret2;
-            //string stringToMd5 = string.Concat(md5secret, md5secret2, merhcantID,
-            //     ordernumber, currencyCode, amount);
+            string md5secret = _dibsPaymentSettings.Md5Secret;
+            string md5secret2 = _dibsPaymentSettings.Md5Secret2;
+            string stringToMd5 = string.Concat(md5secret, md5secret2, merhcantId,
+                 ordernumber, currencyCode, amount);
             //string md5check = CalcMD5Key(merhcantID, ordernumber, currencyCode, amount);
             post.Add("lang", "da");
             post.Add("currency", currencyCode.ToString());
             post.Add("color", "blue");
             post.Add("decorator", "default");
-            post.Add("merchant", merhcantID.ToString());
+            post.Add("merchant", merhcantId.ToString());
             post.Add("orderid", ordernumber.ToString());
             post.Add("amount", amount.ToString());
             //post.Add("md5key", md5check);
@@ -213,19 +217,20 @@ namespace Nop.Plugin.Payments.Dibs
         public override void Install()
         {
             //settings
-            //var settings = new PayPalStandardPaymentSettings
-            //{
-            //    UseSandbox = true,
-            //    BusinessEmail = "test@test.com",
-            //    PdtToken = "Your PDT token here...",
-            //    PdtValidateOrderTotal = true,
-            //    EnableIpn = true,
-            //    AddressOverride = true,
-            //};
-            //_settingService.SaveSetting(settings);
+            var settings = new DibsPaymentSettings
+            {
+                UseSandbox = true,
+                DibsWinFlexUrl = "https://payment.architrade.com/paymentweb/start.action"
+            };
+            _settingService.SaveSetting(settings);
 
             //locales
             this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Dibs.Fields.RedirectionTip", "Du vil blive sendt videre til dibs betalingsvindue for at færdiggøre din ordre.");
+            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Dibs.Fields.UseSandbox", "Brug test mode");
+            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Dibs.Fields.MerchantId", "Merchant id");
+            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Dibs.Fields.Md5Secret", "Md5 secret");
+            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Dibs.Fields.Md5Secret2", "Md5 secret 2");
+            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Dibs.Fields.DibsWinFlexUrl", "Dibs win flex url");
 
             base.Install();
         }
