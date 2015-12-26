@@ -1,0 +1,2 @@
+DataProvider: sqlserver
+DataConnectionString: Data Source=.;Initial Catalog=lenep_katrinelund_dk_db;Integrated Security=True;Persist Security Info=False

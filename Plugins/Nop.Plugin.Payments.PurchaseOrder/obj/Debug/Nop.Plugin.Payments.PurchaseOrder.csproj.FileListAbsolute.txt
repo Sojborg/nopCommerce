@@ -1,0 +1,11 @@
+C:\projects\private\lenep_3_70\Presentation\Nop.Web\Plugins\Payments.PurchaseOrder\Views\PaymentPurchaseOrder\Configure.cshtml
+C:\projects\private\lenep_3_70\Presentation\Nop.Web\Plugins\Payments.PurchaseOrder\Views\PaymentPurchaseOrder\PaymentInfo.cshtml
+C:\projects\private\lenep_3_70\Presentation\Nop.Web\Plugins\Payments.PurchaseOrder\web.config
+C:\projects\private\lenep_3_70\Presentation\Nop.Web\Plugins\Payments.PurchaseOrder\Description.txt
+C:\projects\private\lenep_3_70\Presentation\Nop.Web\Plugins\Payments.PurchaseOrder\logo.jpg
+C:\projects\private\lenep_3_70\Presentation\Nop.Web\Plugins\Payments.PurchaseOrder\Nop.Plugin.Payments.PurchaseOrder.dll.config
+C:\projects\private\lenep_3_70\Presentation\Nop.Web\Plugins\Payments.PurchaseOrder\Nop.Plugin.Payments.PurchaseOrder.dll
+C:\projects\private\lenep_3_70\Presentation\Nop.Web\Plugins\Payments.PurchaseOrder\Nop.Plugin.Payments.PurchaseOrder.pdb
+C:\projects\private\lenep_3_70\Plugins\Nop.Plugin.Payments.PurchaseOrder\obj\Debug\Nop.Plugin.Payments.PurchaseOrder.csprojResolveAssemblyReference.cache
+C:\projects\private\lenep_3_70\Plugins\Nop.Plugin.Payments.PurchaseOrder\obj\Debug\Nop.Plugin.Payments.PurchaseOrder.dll
+C:\projects\private\lenep_3_70\Plugins\Nop.Plugin.Payments.PurchaseOrder\obj\Debug\Nop.Plugin.Payments.PurchaseOrder.pdb
