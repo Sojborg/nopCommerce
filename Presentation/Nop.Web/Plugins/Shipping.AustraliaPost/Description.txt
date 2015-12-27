@@ -1,4 +1,4 @@
-Group: Shipping rate computation
+﻿Group: Shipping rate computation
 FriendlyName: Australia Post
 SystemName: Shipping.AustraliaPost
 Version: 1.17
