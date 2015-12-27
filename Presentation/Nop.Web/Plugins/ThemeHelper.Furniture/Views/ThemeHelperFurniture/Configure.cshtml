@@ -1,0 +1,160 @@
+﻿@model Nop.Plugin.ThemeHelper.Furniture.Models.ConfigurationModel
+@using Nop.Web.Framework
+@{
+    Layout = "";
+}
+@Html.ValidationSummary(false)
+@using (Html.BeginForm())
+{
+@Html.AntiForgeryToken()
+<div id="configure">
+    <ul>
+        <li @Html.RenderSelectedTabIndex(0, GetSelectedTabIndex())>
+            @T("Furniture.Configuration")
+        </li>
+        <li @Html.RenderSelectedTabIndex(1, GetSelectedTabIndex())>
+            @T("Furniture.PreconfigureSystem")
+        </li>
+        <li @Html.RenderSelectedTabIndex(2, GetSelectedTabIndex())>
+            @T("Furniture.SampleData")
+        </li>
+    </ul>
+    <div>
+        @Configuration()
+    </div>
+    <div>
+        @PreconfigureSystem()
+    </div>
+    <div>
+        @SampleData()
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#configure").kendoTabStrip({
+            animation: {
+                open: {
+                    effects: "fadeIn"
+                }
+            },
+            select: tabstrip_on_tab_select
+        });
+    });
+</script>
+
+<input type="hidden" id="selected-tab-index" name="selected-tab-index" value="@(GetSelectedTabIndex())">
+
+@helper Configuration()
+{
+    @Html.Action("StoreScopeConfiguration", "Setting", new { area = "Admin" })
+
+    <table class="adminContent">
+        <tr>
+            <td class="adminTitle">
+                @Html.OverrideStoreCheckboxFor(model => model.Slide1Html_OverrideForStore, model => model.Slide1Html, Model.ActiveStoreScopeConfiguration)
+                @Html.NopLabelFor(model => model.Slide1Html):
+            </td>
+            <td class="adminData">
+                @Html.TextAreaFor(model => model.Slide1Html, new { style = "width: 400px; height: 140px" })
+                @Html.ValidationMessageFor(model => model.Slide1Html)
+            </td>
+        </tr>
+        <tr>
+            <td class="adminTitle">
+                @Html.OverrideStoreCheckboxFor(model => model.Slide2Html_OverrideForStore, model => model.Slide2Html, Model.ActiveStoreScopeConfiguration)
+                @Html.NopLabelFor(model => model.Slide2Html):
+            </td>
+            <td class="adminData">
+                @Html.TextAreaFor(model => model.Slide2Html, new { style = "width: 400px; height: 140px" })
+                @Html.ValidationMessageFor(model => model.Slide2Html)
+            </td>
+        </tr>
+        <tr>
+            <td class="adminTitle">
+                @Html.OverrideStoreCheckboxFor(model => model.Slide3Html_OverrideForStore, model => model.Slide3Html, Model.ActiveStoreScopeConfiguration)
+                @Html.NopLabelFor(model => model.Slide3Html):
+            </td>
+            <td class="adminData">
+                @Html.TextAreaFor(model => model.Slide3Html, new { style = "width: 400px; height: 140px" })
+                @Html.ValidationMessageFor(model => model.Slide3Html)
+            </td>
+        </tr>
+        <tr>
+            <td class="options">
+                <input type="submit" name="saveconfigure" class="k-button" value="@T("Admin.Common.Save")" />
+            </td>
+        </tr>
+    </table>
+}
+
+@helper PreconfigureSystem()
+{
+    <table class="adminContent">
+        <tr>
+            <td>
+                <h4>This tab allows you to preconfigure the theme for correct working:</h4>
+                <ul>
+                    <li>Set "Manufacturer thumbnail image size" to 140</li>
+                    <li>Set "Product thumbnail image size (catalog)" to 180</li>
+                    <li>Set "Product thumbnail image size (product page)" to 120</li>
+                    <li>Set "Category thumb picture size" to 125</li>
+                    <li>Set "Manufacturers block items to display" to 5</li>
+                    <li>Change the breadcrumb delimiter to |</li>
+                    <li>Enable "Use images for language selection"</li>
+                    <li>Disable the default Nivo Slider widget (if installed)</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" width="100%">
+                <input type="submit" name ="preconfigure" class="k-button" value="@T("Furniture.Preconfigure")"/>
+            </td>
+        </tr>
+    </table>
+}
+
+@helper SampleData()
+{
+    <table class="adminContent">
+        <tr>
+            <td>
+                @if (Model.DataAlreadyInstalled)
+                {
+                    <h4>@T("Furniture.SampleData.DataAlreadyInstalled")</h4>
+                }
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="submit" name ="installsampledata" class="k-button" value="@T("Furniture.SampleData.InstallSampleData")" onclick=" return InstallSampleData() " />
+                <p><b>@T("Furniture.SampleData.Note")</b></p>
+            </td>
+        </tr>
+    </table>
+
+    <div class="throbber"> 
+        <div class="curtain">
+        </div>
+        <div class="curtain-content">
+            <div>
+                <h1 class="throbber-header">
+                    @T("Furniture.SampleData.Installing")</h1>
+                <p>
+                    <img src="@Url.Content("~/content/install/images/install-synchronizing.gif")" alt="" />
+                </p>
+            </div>
+        </div>
+    </div>
+}
+    <script type="text/javascript">
+        function InstallSampleData() {
+            if (confirm('@T("Admin.Common.AreYouSure")')) {
+                $('.throbber').show();
+                return true;
+            } else {
+                return false;
+            }
+        }
+    </script>
+}

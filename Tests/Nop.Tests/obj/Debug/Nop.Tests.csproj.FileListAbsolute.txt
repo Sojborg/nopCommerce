@@ -7,3 +7,12 @@ C:\projects\private\lenep_3_70\Tests\Nop.Tests\bin\Debug\Rhino.Mocks.xml
 C:\projects\private\lenep_3_70\Tests\Nop.Tests\obj\Debug\Nop.Tests.csprojResolveAssemblyReference.cache
 C:\projects\private\lenep_3_70\Tests\Nop.Tests\obj\Debug\Nop.Tests.dll
 C:\projects\private\lenep_3_70\Tests\Nop.Tests\obj\Debug\Nop.Tests.pdb
+C:\projects\private\nopCommerce\Tests\Nop.Tests\bin\Debug\Nop.Tests.dll
+C:\projects\private\nopCommerce\Tests\Nop.Tests\bin\Debug\Nop.Tests.pdb
+C:\projects\private\nopCommerce\Tests\Nop.Tests\bin\Debug\nunit.framework.dll
+C:\projects\private\nopCommerce\Tests\Nop.Tests\bin\Debug\Rhino.Mocks.dll
+C:\projects\private\nopCommerce\Tests\Nop.Tests\bin\Debug\nunit.framework.xml
+C:\projects\private\nopCommerce\Tests\Nop.Tests\bin\Debug\Rhino.Mocks.xml
+C:\projects\private\nopCommerce\Tests\Nop.Tests\obj\Debug\Nop.Tests.csprojResolveAssemblyReference.cache
+C:\projects\private\nopCommerce\Tests\Nop.Tests\obj\Debug\Nop.Tests.dll
+C:\projects\private\nopCommerce\Tests\Nop.Tests\obj\Debug\Nop.Tests.pdb

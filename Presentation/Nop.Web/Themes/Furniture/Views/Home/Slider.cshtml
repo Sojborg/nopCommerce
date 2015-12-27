@@ -1,0 +1,33 @@
+﻿@model Nop.Plugin.ThemeHelper.Furniture.Models.SliderModel
+@{
+    Html.AddScriptParts("~/Themes/Furniture/Scripts/jquery.bxslider.min.js");
+}
+@using Nop.Web.Framework.UI
+
+@helper RenderSliderLine(string html)
+{
+if (!string.IsNullOrEmpty(html))
+{
+        <li>@Html.Raw(html)</li>
+}
+}
+<div class="slider-wrapper theme-default homepage-slider">
+    <ul class="bxslider">
+        @RenderSliderLine(Model.Slide1Html)
+        @RenderSliderLine(Model.Slide2Html)
+        @RenderSliderLine(Model.Slide3Html)
+    </ul>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.bxslider').bxSlider({
+            autoStart: true,
+            autoHover: true,
+            speed: 1000,
+            prevText: "@T("Furniture.Previous")",
+            nextText: "@T("Furniture.Next")",
+            auto: true,
+            pause: 5000
+        });
+    });
+</script>

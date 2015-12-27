@@ -1,0 +1,37 @@
+﻿@model Nop.Plugin.ThemeHelper.Furniture.Models.ShoppingCartBoxModel
+<div class="shopping-cart-box">
+    @if (Model.ShoppingCartEnabled)
+    {
+        <div id="topcartlink">
+            <div class="cart-title">
+                <div class="text-wrapper">
+                    <a href="@Url.RouteUrl("ShoppingCart")" class="ico-cart">@T("ShoppingCart")</a>
+                </div>
+            </div>
+            <div class="cart-qty">
+                <div class="text-wrapper">
+                    <a href="@Url.RouteUrl("ShoppingCart")">
+                        <span class="qty">@Model.ItemsCount</span><span class="text">@T("Furniture.ShoppingCart.Items")</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('.header').on('mouseenter', '#topcartlink', function () {
+                    $('#flyout-cart').addClass('active');
+                });
+                $('.header').on('mouseleave', '#topcartlink', function () {
+                    $('#flyout-cart').removeClass('active');
+                });
+                $('.header').on('mouseenter', '#flyout-cart', function () {
+                    $('#flyout-cart').addClass('active');
+                });
+                $('.header').on('mouseleave', '#flyout-cart', function () {
+                    $('#flyout-cart').removeClass('active');
+                });
+            });
+        </script>
+    }
+</div>

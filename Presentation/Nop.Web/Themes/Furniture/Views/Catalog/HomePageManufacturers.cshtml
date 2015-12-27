@@ -1,0 +1,57 @@
+﻿@using Nop.Plugin.ThemeHelper.Furniture.Models
+@model Nop.Plugin.ThemeHelper.Furniture.Models.HomePageManufacturersModel
+
+
+@helper RenderSliderLine(Nop.Plugin.ThemeHelper.Furniture.Models.ManufacturerBriefInfoModel manufacturer)
+{
+if (!string.IsNullOrEmpty(manufacturer.PictureUrl))
+{
+        <li>
+            <a href="@Url.RouteUrl("Manufacturer", new {SeName = manufacturer.SeName})">
+                <img src="@manufacturer.PictureUrl" alt="@manufacturer.Name" />
+            </a>
+        </li>
+}
+}
+
+@if (Model.Manufacturers.Count(m => !string.IsNullOrEmpty(m.PictureUrl)) > 0)
+{
+    <div class="slider-wrapper theme-default manufacturers">
+        <ul id="ManufacturerSlider">
+            @foreach (var m in Model.Manufacturers)
+            {
+                @RenderSliderLine(m)
+            }
+        </ul>
+    </div>
+}
+
+@if (Model.Manufacturers.Count(m => !string.IsNullOrEmpty(m.PictureUrl)) > 1)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#ManufacturerSlider').bxSlider({
+                minSlides: 0,
+                maxSlides: 5,
+                moveSlides: 1,
+                slideWidth: '180px',
+                pager: false,
+                prevText: '',
+                nextText: '',
+                onSliderLoad: function () {
+                    var marginBottom = $('.bx-wrapper', $('.manufacturers')).css('margin-bottom');
+                    var padding = parseInt(marginBottom) / 2 + 'px 0';
+                    $('.bx-wrapper', $('.manufacturers')).css('margin', 0);
+                    $('.bx-wrapper', $('.manufacturers')).css('padding', padding);
+
+                    var ulheight = $('#ManufacturerSlider').innerHeight();
+                    $('li', $('#ManufacturerSlider')).each(function (i) {
+                        var liheight = $(this).innerHeight();
+                        var marginTop = (ulheight - liheight) / 2;
+                        $(this).css('margin-top', marginTop);
+                    });
+                }
+            });
+        });
+    </script>
+}

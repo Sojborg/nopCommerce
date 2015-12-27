@@ -1,4 +1,4 @@
-﻿Group: Shipping rate computation
+Group: Shipping rate computation
 FriendlyName: UPS (United Parcel Service)
 SystemName: Shipping.UPS
 Version: 1.19

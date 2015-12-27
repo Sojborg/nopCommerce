@@ -1,0 +1,20 @@
+﻿@using Nop.Core
+@model Nop.Plugin.ThemeHelper.Furniture.Models.WelcomeModel
+<div class="welcome-block">
+    @if (Model.IsAuthenticated)
+    {
+        <span>
+            @T("Furniture.YouAreLogged")@CommonHelper.EnsureMaximumLength(Model.CustomerFirstName, 20, "...")
+            (<a href="@Url.RouteUrl("Logout")" class="ico-logout">@T("Furniture.Logout")</a>)
+        </span>
+    }
+    else
+    {
+        <span>
+            @T("Furniture.WelcomeVisitor")
+            <a href="@Url.RouteUrl("Login")" class="ico-login">@T("Furniture.Login")</a>
+            @T("Furniture.Or")
+            <a href="@Url.RouteUrl("Register")" class="ico-register">@T("Furniture.Register")</a>
+        </span>
+    }
+</div>

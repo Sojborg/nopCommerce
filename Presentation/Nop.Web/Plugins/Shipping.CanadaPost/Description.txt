@@ -1,4 +1,4 @@
-﻿Group: Shipping rate computation
+Group: Shipping rate computation
 FriendlyName: Canada Post
 SystemName: Shipping.CanadaPost
 Version: 1.13
