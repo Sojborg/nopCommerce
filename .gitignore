@@ -20,3 +20,5 @@ _ReSharper.*
 *.orig
 ~$*
 azure_service_bus_connection_string.txt
+*.dll
+*.pdb
