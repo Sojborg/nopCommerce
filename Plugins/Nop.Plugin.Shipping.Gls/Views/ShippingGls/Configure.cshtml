@@ -1,7 +1,7 @@
 ﻿@{
     Layout = "";
 }
-@model Nop.Plugin.Shipping.AustraliaPost.Models.AustraliaPostShippingModel
+@model Nop.Plugin.Shipping.Gls.Models.GlsShippingModel
 @using Nop.Web.Framework;
 @using (Html.BeginForm())
 {
@@ -18,20 +18,20 @@
         </tr>
         <tr>
             <td class="adminTitle">
-                @Html.NopLabelFor(model => model.AdditionalHandlingCharge):
+                @Html.NopLabelFor(model => model.Rate):
             </td>
             <td class="adminData">
-                @Html.EditorFor(model => model.AdditionalHandlingCharge)
-                @Html.ValidationMessageFor(model => model.AdditionalHandlingCharge)
+                @Html.EditorFor(model => model.Rate)
+                @Html.ValidationMessageFor(model => model.Rate)
             </td>
         </tr>
         <tr>
             <td class="adminTitle">
-                @Html.NopLabelFor(model => model.HideDeliveryInformation):
+                @Html.NopLabelFor(model => model.NumberOfSearchResults):
             </td>
             <td class="adminData">
-                @Html.EditorFor(model => model.HideDeliveryInformation)
-                @Html.ValidationMessageFor(model => model.HideDeliveryInformation)
+                @Html.EditorFor(model => model.NumberOfSearchResults)
+                @Html.ValidationMessageFor(model => model.NumberOfSearchResults)
             </td>
         </tr>
         <tr>

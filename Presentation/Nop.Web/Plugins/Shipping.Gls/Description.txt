@@ -1,0 +1,8 @@
+﻿Group: Shipping rate computation
+FriendlyName: GLS
+SystemName: Shipping.Gls
+Version: 1.00
+SupportedVersions: 3.70
+Author: sojborg
+DisplayOrder: 1
+FileName: Nop.Plugin.Shipping.Gls.dll

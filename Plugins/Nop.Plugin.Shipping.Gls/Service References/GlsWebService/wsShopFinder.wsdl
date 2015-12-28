@@ -1,0 +1,554 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://gls.dk/webservices/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://gls.dk/webservices/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://gls.dk/webservices/">
+      <s:element name="GetOneParcelShop">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ParcelShopNumber" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetOneParcelShopResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="GetOneParcelShopResult" type="tns:PakkeshopData" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="PakkeshopData">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Number" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CompanyName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Streetname" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Streetname2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ZipCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CityName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CountryCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CountryCodeISO3166A2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Telephone" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Longitude" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Latitude" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="DistanceMetersAsTheCrowFlies" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="OpeningHours" type="tns:ArrayOfWeekday" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfWeekday">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Weekday" type="tns:Weekday" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Weekday">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="day" type="tns:Day" />
+          <s:element minOccurs="1" maxOccurs="1" name="openAt" type="tns:Hour" />
+          <s:element minOccurs="0" maxOccurs="1" name="breaks" type="tns:ArrayOfBreak" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="Day">
+        <s:restriction base="s:string">
+          <s:enumeration value="Monday" />
+          <s:enumeration value="Tuesday" />
+          <s:enumeration value="Wednesday" />
+          <s:enumeration value="Thursday" />
+          <s:enumeration value="Friday" />
+          <s:enumeration value="Saturday" />
+          <s:enumeration value="Sunday" />
+        </s:restriction>
+      </s:simpleType>
+      <s:complexType name="Hour">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="From" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="To" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfBreak">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Break" type="tns:Break" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Break">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Start" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="End" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetAllParcelShops">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="countryIso3166A2" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetAllParcelShopsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetAllParcelShopsResult" type="tns:ArrayOfPakkeshopData" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfPakkeshopData">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="PakkeshopData" type="tns:PakkeshopData" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetParcelShopsInZipcode">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="zipcode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="countryIso3166A2" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetParcelShopsInZipcodeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetParcelShopsInZipcodeResult" type="tns:ArrayOfPakkeshopData" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SearchNearestParcelShops">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="street" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="zipcode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="countryIso3166A2" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Amount" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SearchNearestParcelShopsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="SearchNearestParcelShopsResult" type="tns:ParcelShopSearchResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ParcelShopSearchResult">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="accuracylevel" type="tns:AccuracyLevel" />
+          <s:element minOccurs="0" maxOccurs="1" name="parcelshops" type="tns:ArrayOfPakkeshopData" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="AccuracyLevel">
+        <s:restriction base="s:string">
+          <s:enumeration value="EXACT" />
+          <s:enumeration value="STREET" />
+          <s:enumeration value="ZIP" />
+          <s:enumeration value="UNKNOWN" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="GetParcelShopDropPoint">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="street" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="zipcode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="countryIso3166A2" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Amount" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetParcelShopDropPointResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="GetParcelShopDropPointResult" type="tns:ParcelShopSearchResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PakkeshopData" type="tns:PakkeshopData" />
+      <s:element name="ArrayOfPakkeshopData" nillable="true" type="tns:ArrayOfPakkeshopData" />
+      <s:element name="ParcelShopSearchResult" type="tns:ParcelShopSearchResult" />
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="GetOneParcelShopSoapIn">
+    <wsdl:part name="parameters" element="tns:GetOneParcelShop" />
+  </wsdl:message>
+  <wsdl:message name="GetOneParcelShopSoapOut">
+    <wsdl:part name="parameters" element="tns:GetOneParcelShopResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetAllParcelShopsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetAllParcelShops" />
+  </wsdl:message>
+  <wsdl:message name="GetAllParcelShopsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetAllParcelShopsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetParcelShopsInZipcodeSoapIn">
+    <wsdl:part name="parameters" element="tns:GetParcelShopsInZipcode" />
+  </wsdl:message>
+  <wsdl:message name="GetParcelShopsInZipcodeSoapOut">
+    <wsdl:part name="parameters" element="tns:GetParcelShopsInZipcodeResponse" />
+  </wsdl:message>
+  <wsdl:message name="SearchNearestParcelShopsSoapIn">
+    <wsdl:part name="parameters" element="tns:SearchNearestParcelShops" />
+  </wsdl:message>
+  <wsdl:message name="SearchNearestParcelShopsSoapOut">
+    <wsdl:part name="parameters" element="tns:SearchNearestParcelShopsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetParcelShopDropPointSoapIn">
+    <wsdl:part name="parameters" element="tns:GetParcelShopDropPoint" />
+  </wsdl:message>
+  <wsdl:message name="GetParcelShopDropPointSoapOut">
+    <wsdl:part name="parameters" element="tns:GetParcelShopDropPointResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetOneParcelShopHttpGetIn">
+    <wsdl:part name="ParcelShopNumber" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetOneParcelShopHttpGetOut">
+    <wsdl:part name="Body" element="tns:PakkeshopData" />
+  </wsdl:message>
+  <wsdl:message name="GetAllParcelShopsHttpGetIn">
+    <wsdl:part name="countryIso3166A2" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetAllParcelShopsHttpGetOut">
+    <wsdl:part name="Body" element="tns:ArrayOfPakkeshopData" />
+  </wsdl:message>
+  <wsdl:message name="GetParcelShopsInZipcodeHttpGetIn">
+    <wsdl:part name="zipcode" type="s:string" />
+    <wsdl:part name="countryIso3166A2" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetParcelShopsInZipcodeHttpGetOut">
+    <wsdl:part name="Body" element="tns:ArrayOfPakkeshopData" />
+  </wsdl:message>
+  <wsdl:message name="SearchNearestParcelShopsHttpGetIn">
+    <wsdl:part name="street" type="s:string" />
+    <wsdl:part name="zipcode" type="s:string" />
+    <wsdl:part name="countryIso3166A2" type="s:string" />
+    <wsdl:part name="Amount" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SearchNearestParcelShopsHttpGetOut">
+    <wsdl:part name="Body" element="tns:ParcelShopSearchResult" />
+  </wsdl:message>
+  <wsdl:message name="GetParcelShopDropPointHttpGetIn">
+    <wsdl:part name="street" type="s:string" />
+    <wsdl:part name="zipcode" type="s:string" />
+    <wsdl:part name="countryIso3166A2" type="s:string" />
+    <wsdl:part name="Amount" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetParcelShopDropPointHttpGetOut">
+    <wsdl:part name="Body" element="tns:ParcelShopSearchResult" />
+  </wsdl:message>
+  <wsdl:message name="GetOneParcelShopHttpPostIn">
+    <wsdl:part name="ParcelShopNumber" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetOneParcelShopHttpPostOut">
+    <wsdl:part name="Body" element="tns:PakkeshopData" />
+  </wsdl:message>
+  <wsdl:message name="GetAllParcelShopsHttpPostIn">
+    <wsdl:part name="countryIso3166A2" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetAllParcelShopsHttpPostOut">
+    <wsdl:part name="Body" element="tns:ArrayOfPakkeshopData" />
+  </wsdl:message>
+  <wsdl:message name="GetParcelShopsInZipcodeHttpPostIn">
+    <wsdl:part name="zipcode" type="s:string" />
+    <wsdl:part name="countryIso3166A2" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetParcelShopsInZipcodeHttpPostOut">
+    <wsdl:part name="Body" element="tns:ArrayOfPakkeshopData" />
+  </wsdl:message>
+  <wsdl:message name="SearchNearestParcelShopsHttpPostIn">
+    <wsdl:part name="street" type="s:string" />
+    <wsdl:part name="zipcode" type="s:string" />
+    <wsdl:part name="countryIso3166A2" type="s:string" />
+    <wsdl:part name="Amount" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SearchNearestParcelShopsHttpPostOut">
+    <wsdl:part name="Body" element="tns:ParcelShopSearchResult" />
+  </wsdl:message>
+  <wsdl:message name="GetParcelShopDropPointHttpPostIn">
+    <wsdl:part name="street" type="s:string" />
+    <wsdl:part name="zipcode" type="s:string" />
+    <wsdl:part name="countryIso3166A2" type="s:string" />
+    <wsdl:part name="Amount" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetParcelShopDropPointHttpPostOut">
+    <wsdl:part name="Body" element="tns:ParcelShopSearchResult" />
+  </wsdl:message>
+  <wsdl:portType name="wsShopFinderSoap">
+    <wsdl:operation name="GetOneParcelShop">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get one ParcelShop</wsdl:documentation>
+      <wsdl:input message="tns:GetOneParcelShopSoapIn" />
+      <wsdl:output message="tns:GetOneParcelShopSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAllParcelShops">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns all ParcelShops in a given country</wsdl:documentation>
+      <wsdl:input message="tns:GetAllParcelShopsSoapIn" />
+      <wsdl:output message="tns:GetAllParcelShopsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetParcelShopsInZipcode">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns all ParcelShops in a zipcode - or the 3 nearest in other zipcodes</wsdl:documentation>
+      <wsdl:input message="tns:GetParcelShopsInZipcodeSoapIn" />
+      <wsdl:output message="tns:GetParcelShopsInZipcodeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SearchNearestParcelShops">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Search for nearest ParcelShops to an address</wsdl:documentation>
+      <wsdl:input message="tns:SearchNearestParcelShopsSoapIn" />
+      <wsdl:output message="tns:SearchNearestParcelShopsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetParcelShopDropPoint">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get ParcelShop droppoint close to an address</wsdl:documentation>
+      <wsdl:input message="tns:GetParcelShopDropPointSoapIn" />
+      <wsdl:output message="tns:GetParcelShopDropPointSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="wsShopFinderHttpGet">
+    <wsdl:operation name="GetOneParcelShop">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get one ParcelShop</wsdl:documentation>
+      <wsdl:input message="tns:GetOneParcelShopHttpGetIn" />
+      <wsdl:output message="tns:GetOneParcelShopHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAllParcelShops">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns all ParcelShops in a given country</wsdl:documentation>
+      <wsdl:input message="tns:GetAllParcelShopsHttpGetIn" />
+      <wsdl:output message="tns:GetAllParcelShopsHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetParcelShopsInZipcode">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns all ParcelShops in a zipcode - or the 3 nearest in other zipcodes</wsdl:documentation>
+      <wsdl:input message="tns:GetParcelShopsInZipcodeHttpGetIn" />
+      <wsdl:output message="tns:GetParcelShopsInZipcodeHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SearchNearestParcelShops">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Search for nearest ParcelShops to an address</wsdl:documentation>
+      <wsdl:input message="tns:SearchNearestParcelShopsHttpGetIn" />
+      <wsdl:output message="tns:SearchNearestParcelShopsHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetParcelShopDropPoint">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get ParcelShop droppoint close to an address</wsdl:documentation>
+      <wsdl:input message="tns:GetParcelShopDropPointHttpGetIn" />
+      <wsdl:output message="tns:GetParcelShopDropPointHttpGetOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="wsShopFinderHttpPost">
+    <wsdl:operation name="GetOneParcelShop">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get one ParcelShop</wsdl:documentation>
+      <wsdl:input message="tns:GetOneParcelShopHttpPostIn" />
+      <wsdl:output message="tns:GetOneParcelShopHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAllParcelShops">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns all ParcelShops in a given country</wsdl:documentation>
+      <wsdl:input message="tns:GetAllParcelShopsHttpPostIn" />
+      <wsdl:output message="tns:GetAllParcelShopsHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetParcelShopsInZipcode">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns all ParcelShops in a zipcode - or the 3 nearest in other zipcodes</wsdl:documentation>
+      <wsdl:input message="tns:GetParcelShopsInZipcodeHttpPostIn" />
+      <wsdl:output message="tns:GetParcelShopsInZipcodeHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SearchNearestParcelShops">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Search for nearest ParcelShops to an address</wsdl:documentation>
+      <wsdl:input message="tns:SearchNearestParcelShopsHttpPostIn" />
+      <wsdl:output message="tns:SearchNearestParcelShopsHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetParcelShopDropPoint">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get ParcelShop droppoint close to an address</wsdl:documentation>
+      <wsdl:input message="tns:GetParcelShopDropPointHttpPostIn" />
+      <wsdl:output message="tns:GetParcelShopDropPointHttpPostOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="wsShopFinderSoap" type="tns:wsShopFinderSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetOneParcelShop">
+      <soap:operation soapAction="http://gls.dk/webservices/GetOneParcelShop" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllParcelShops">
+      <soap:operation soapAction="http://gls.dk/webservices/GetAllParcelShops" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetParcelShopsInZipcode">
+      <soap:operation soapAction="http://gls.dk/webservices/GetParcelShopsInZipcode" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchNearestParcelShops">
+      <soap:operation soapAction="http://gls.dk/webservices/SearchNearestParcelShops" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetParcelShopDropPoint">
+      <soap:operation soapAction="http://gls.dk/webservices/GetParcelShopDropPoint" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="wsShopFinderSoap12" type="tns:wsShopFinderSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetOneParcelShop">
+      <soap12:operation soapAction="http://gls.dk/webservices/GetOneParcelShop" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllParcelShops">
+      <soap12:operation soapAction="http://gls.dk/webservices/GetAllParcelShops" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetParcelShopsInZipcode">
+      <soap12:operation soapAction="http://gls.dk/webservices/GetParcelShopsInZipcode" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchNearestParcelShops">
+      <soap12:operation soapAction="http://gls.dk/webservices/SearchNearestParcelShops" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetParcelShopDropPoint">
+      <soap12:operation soapAction="http://gls.dk/webservices/GetParcelShopDropPoint" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="wsShopFinderHttpGet" type="tns:wsShopFinderHttpGet">
+    <http:binding verb="GET" />
+    <wsdl:operation name="GetOneParcelShop">
+      <http:operation location="/GetOneParcelShop" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllParcelShops">
+      <http:operation location="/GetAllParcelShops" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetParcelShopsInZipcode">
+      <http:operation location="/GetParcelShopsInZipcode" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchNearestParcelShops">
+      <http:operation location="/SearchNearestParcelShops" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetParcelShopDropPoint">
+      <http:operation location="/GetParcelShopDropPoint" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="wsShopFinderHttpPost" type="tns:wsShopFinderHttpPost">
+    <http:binding verb="POST" />
+    <wsdl:operation name="GetOneParcelShop">
+      <http:operation location="/GetOneParcelShop" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllParcelShops">
+      <http:operation location="/GetAllParcelShops" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetParcelShopsInZipcode">
+      <http:operation location="/GetParcelShopsInZipcode" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchNearestParcelShops">
+      <http:operation location="/SearchNearestParcelShops" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetParcelShopDropPoint">
+      <http:operation location="/GetParcelShopDropPoint" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="wsShopFinder">
+    <wsdl:port name="wsShopFinderSoap" binding="tns:wsShopFinderSoap">
+      <soap:address location="http://www.gls.dk/webservices_v3/wsShopFinder.asmx" />
+    </wsdl:port>
+    <wsdl:port name="wsShopFinderSoap12" binding="tns:wsShopFinderSoap12">
+      <soap12:address location="http://www.gls.dk/webservices_v3/wsShopFinder.asmx" />
+    </wsdl:port>
+    <wsdl:port name="wsShopFinderHttpGet" binding="tns:wsShopFinderHttpGet">
+      <http:address location="http://www.gls.dk/webservices_v3/wsShopFinder.asmx" />
+    </wsdl:port>
+    <wsdl:port name="wsShopFinderHttpPost" binding="tns:wsShopFinderHttpPost">
+      <http:address location="http://www.gls.dk/webservices_v3/wsShopFinder.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
